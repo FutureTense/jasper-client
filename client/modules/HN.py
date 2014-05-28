@@ -41,7 +41,7 @@ def getTopStories(maxResults=None):
     return matches
 
 
-def handle(text, mic, profile):
+def handle(text, mic, config):
     """
         Responds to user-input, typically speech text, with a sample of
         Hacker News's top headlines, sending them to the user over email
@@ -50,7 +50,7 @@ def handle(text, mic, profile):
         Arguments:
         text -- user-input, typically transcribed speech
         mic -- used to interact with the user (for both input and output)
-        profile -- contains information related to the user (e.g., phone number)
+        config -- contains a ConfigParser object loaded with information from jasper.conf
     """
     mic.say("Pulling up some stories.")
     stories = getTopStories(maxResults=3)
@@ -73,13 +73,13 @@ def handle(text, mic, profile):
         if send_all or chosen_articles:
             mic.say("Sure, just give me a moment")
 
-            if profile['prefers_email']:
+            if config.get('profile','prefers_email').lower()=="true":
                 body = "<ul>"
 
             def formatArticle(article):
                 tiny_url = app_utils.generateTinyURL(article.URL)
 
-                if profile['prefers_email']:
+                if config.get('profile','prefers_email').lower()=="true":
                     return "<li><a href=\'%s\'>%s</a></li>" % (tiny_url,
                                                                article.title)
                 else:
@@ -89,18 +89,18 @@ def handle(text, mic, profile):
                 if send_all or (idx + 1) in chosen_articles:
                     article_link = formatArticle(article)
 
-                    if profile['prefers_email']:
+                    if config.get('profile','prefers_email').lower()=="true":
                         body += article_link
                     else:
-                        if not app_utils.emailUser(profile, SUBJECT="", BODY=article_link):
+                        if not app_utils.emailUser(config, SUBJECT="", BODY=article_link):
                             mic.say(
                                 "I'm having trouble sending you these articles. Please make sure that your phone number and carrier are correct on the dashboard.")
                             return
 
             # if prefers email, we send once, at the end
-            if profile['prefers_email']:
+            if config.get('profile','prefers_email').lower()=="true":
                 body += "</ul>"
-                if not app_utils.emailUser(profile, SUBJECT="From the Front Page of Hacker News", BODY=body):
+                if not app_utils.emailUser(config, SUBJECT="From the Front Page of Hacker News", BODY=body):
                     mic.say(
                         "I'm having trouble sending you these articles. Please make sure that your phone number and carrier are correct on the dashboard.")
                     return
@@ -110,7 +110,7 @@ def handle(text, mic, profile):
         else:
             mic.say("OK I will not send any articles")
 
-    if not profile['prefers_email'] and profile['phone_number']:
+    if config.get('profile','prefers_email').lower()!="true" and not config.has_option('profile','phone_number'):
         mic.say("Here are some front-page articles. " +
                 all_titles + ". Would you like me to send you these? If so, which?")
         handleResponse(mic.activeListen())

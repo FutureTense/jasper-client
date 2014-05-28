@@ -5,7 +5,7 @@ from facebook import *
 WORDS = ["FACEBOOK", "NOTIFICATION"]
 
 
-def handle(text, mic, profile):
+def handle(text, mic, config):
     """
         Responds to user-input, typically speech text, with a summary of
         the user's Facebook notifications, including a count and details
@@ -14,9 +14,9 @@ def handle(text, mic, profile):
         Arguments:
         text -- user-input, typically transcribed speech
         mic -- used to interact with the user (for both input and output)
-        profile -- contains information related to the user (e.g., phone number)
+        config -- contains a ConfigParser object loaded with information from jasper.conf
     """
-    oauth_access_token = profile['keys']['FB_TOKEN']
+    oauth_access_token = config.get('facebook','token')
 
     graph = GraphAPI(oauth_access_token)
 

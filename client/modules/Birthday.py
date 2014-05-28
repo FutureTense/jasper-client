@@ -6,7 +6,7 @@ from app_utils import getTimezone
 WORDS = ["BIRTHDAY"]
 
 
-def handle(text, mic, profile):
+def handle(text, mic, config):
     """
         Responds to user-input, typically speech text, by listing the user's
         Facebook friends with birthdays today.
@@ -14,9 +14,9 @@ def handle(text, mic, profile):
         Arguments:
         text -- user-input, typically transcribed speech
         mic -- used to interact with the user (for both input and output)
-        profile -- contains information related to the user (e.g., phone number)
+        config -- contains a ConfigParser object loaded with information from jasper.conf
     """
-    oauth_access_token = profile['keys']["FB_TOKEN"]
+    oauth_access_token = config.get('facebook','token')
 
     graph = GraphAPI(oauth_access_token)
 
@@ -32,7 +32,7 @@ def handle(text, mic, profile):
             "I apologize, there's a problem with that service at the moment.")
         return
 
-    needle = datetime.datetime.now(tz=getTimezone(profile)).strftime("%m/%d")
+    needle = datetime.datetime.now(tz=getTimezone(config)).strftime("%m/%d")
 
     people = []
     for person in results['data']:

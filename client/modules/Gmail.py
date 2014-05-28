@@ -45,12 +45,12 @@ def getMostRecentDate(emails):
     return None
 
 
-def fetchUnreadEmails(profile, since=None, markRead=False, limit=None):
+def fetchUnreadEmails(config, since=None, markRead=False, limit=None):
     """
         Fetches a list of unread email objects from a user's Gmail inbox.
 
         Arguments:
-        profile -- contains information related to the user (e.g., Gmail address)
+        config -- contains a ConfigParser object loaded with information from jasper.conf
         since -- if provided, no emails before this date will be returned
         markRead -- if True, marks all returned emails as read in target inbox
 
@@ -59,7 +59,7 @@ def fetchUnreadEmails(profile, since=None, markRead=False, limit=None):
     """
     conn = imaplib.IMAP4_SSL('imap.gmail.com')
     conn.debug = 0
-    conn.login(profile['gmail_address'], profile['gmail_password'])
+    conn.login(config.get('profile','gmail_address'),config.get('profile','gmail_password'))
     conn.select(readonly=(not markRead))
 
     msgs = []
@@ -83,7 +83,7 @@ def fetchUnreadEmails(profile, since=None, markRead=False, limit=None):
     return msgs
 
 
-def handle(text, mic, profile):
+def handle(text, mic, config):
     """
         Responds to user-input, typically speech text, with a summary of
         the user's Gmail inbox, reporting on the number of unread emails
@@ -92,10 +92,10 @@ def handle(text, mic, profile):
         Arguments:
         text -- user-input, typically transcribed speech
         mic -- used to interact with the user (for both input and output)
-        profile -- contains information related to the user (e.g., Gmail address)
+        config -- contains a ConfigParser object loaded with information from jasper.conf
     """
     try:
-        msgs = fetchUnreadEmails(profile, limit=5)
+        msgs = fetchUnreadEmails(config, limit=5)
 
         if isinstance(msgs, int):
             response = "You have %d unread emails." % msgs

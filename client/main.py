@@ -1,7 +1,7 @@
-import yaml
+import ConfigParser,os.path,os
 import sys
 from conversation import Conversation
-
+import jasperConfig 
 
 def isLocal():
     return len(sys.argv) > 1 and sys.argv[1] == "--local"
@@ -18,13 +18,13 @@ if __name__ == "__main__":
     print " Copyright 2013 Shubhro Saha & Charlie Marsh               "
     print "==========================================================="
 
-    profile = yaml.safe_load(open("profile.yml", "r"))
+    configParser = jasperConfig.load() 
 
     mic = Mic("languagemodel.lm", "dictionary.dic",
               "languagemodel_persona.lm", "dictionary_persona.dic")
 
     mic.say("How can I be of service?")
 
-    conversation = Conversation("JASPER", mic, profile)
+    conversation = Conversation("JASPER", mic, configParser)
 
     conversation.handleForever()

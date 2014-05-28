@@ -6,14 +6,14 @@ WORDS = []
 PRIORITY = -(maxint + 1)
 
 
-def handle(text, mic, profile):
+def handle(text, mic, config):
     """
         Reports that the user has unclear or unusable input.
 
         Arguments:
         text -- user-input, typically transcribed speech
         mic -- used to interact with the user (for both input and output)
-        profile -- contains information related to the user (e.g., phone number)
+        config -- contains a ConfigParser object loaded with information from jasper.conf
     """
 
     messages = ["I'm sorry, could you repeat that?",

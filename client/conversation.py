@@ -5,12 +5,12 @@ from mpd import MPDClient
 
 class Conversation(object):
 
-    def __init__(self, persona, mic, profile):
+    def __init__(self, persona, mic, config):
         self.persona = persona
         self.mic = mic
-        self.profile = profile
-        self.brain = Brain(mic, profile)
-        self.notifier = Notifier(profile)
+        self.config = config
+        self.brain = Brain(mic, config)
+        self.notifier = Notifier(config)
 
     def delegateInput(self, text):
         """A wrapper for querying brain."""

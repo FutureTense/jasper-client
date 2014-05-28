@@ -29,14 +29,14 @@ def getRandomJoke(filename="JOKES.txt"):
     return joke
 
 
-def handle(text, mic, profile):
+def handle(text, mic, config):
     """
         Responds to user-input, typically speech text, by telling a joke.
 
         Arguments:
         text -- user-input, typically transcribed speech
         mic -- used to interact with the user (for both input and output)
-        profile -- contains information related to the user (e.g., phone number)
+        config -- contains a ConfigParser object loaded with information from jasper.conf
     """
     joke = getRandomJoke()
 

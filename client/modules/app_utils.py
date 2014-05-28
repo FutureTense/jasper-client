@@ -28,47 +28,47 @@ def sendEmail(SUBJECT, BODY, TO, FROM, SENDER, PASSWORD, SMTP_SERVER):
     session.quit()
 
 
-def emailUser(profile, SUBJECT="", BODY=""):
+def emailUser(config, SUBJECT="", BODY=""):
     """
         Sends an email.
 
         Arguments:
-        profile -- contains information related to the user (e.g., email address)
+        config -- contains a ConfigParser object loaded with information from jasper.conf
         SUBJECT -- subject line of the email
         BODY -- body text of the email
     """
-    def generateSMSEmail(profile):
+    def generateSMSEmail(config):
         """Generates an email from a user's phone number based on their carrier."""
-        if profile['carrier'] is None or not profile['phone_number']:
+        if not config.has_option('profile','carrier') or not config.has_option('profile','phone_number'):
             return None
 
-        return str(profile['phone_number']) + "@" + profile['carrier']
+        return str(config.get('profile','phone_number')) + "@" + config.get('profile','carrier')
 
-    if profile['prefers_email'] and profile['gmail_address']:
+    if config.get('profile','prefers_email').lower()=="true" and config.has_option('profile','gmail_address'):
         # add footer
         if BODY:
-            BODY = profile['first_name'] + \
+            BODY = config.get('profile','first_name') + \
                 ",<br><br>Here are your top headlines:" + BODY
             BODY += "<br>Sent from your Jasper"
 
-        recipient = profile['gmail_address']
-        if profile['first_name'] and profile['last_name']:
-            recipient = profile['first_name'] + " " + \
-                profile['last_name'] + " <%s>" % recipient
+        recipient = config.get('profile','gmail_address')
+        if config.has_option('profile','first_name') and config.has_option('profile','last_name'):
+            recipient = config.get('profile','first_name') + " " + \
+                config.get('profile','last_name') + " <%s>" % recipient
     else:
-        recipient = generateSMSEmail(profile)
+        recipient = generateSMSEmail(config)
 
     if not recipient:
         return False
 
     try:
-        if 'mailgun' in profile:
-            user = profile['mailgun']['username']
-            password = profile['mailgun']['password']
+        if 'mailgun' in config.sections():
+            user = config.get('mailgun','username')
+            password = config.get('mailgun','password')
             server = 'smtp.mailgun.org'
         else:
-            user = profile['gmail_address']
-            password = profile['gmail_password']
+            user = config.get('profile','gmail_address')
+            password = config.get('profile','gmail_password')
             server = 'smtp.gmail.com'
         sendEmail(SUBJECT, BODY, recipient, user,
                   "Jasper <jasper>", password, server)
@@ -78,15 +78,15 @@ def emailUser(profile, SUBJECT="", BODY=""):
         return False
 
 
-def getTimezone(profile):
+def getTimezone(config):
     """
-        Returns the pytz timezone for a given profile.
+        Returns the pytz timezone for a given config value.
 
         Arguments:
-        profile -- contains information related to the user (e.g., email address)
+        config -- contains a ConfigParser object loaded with information from jasper.conf
     """
     try:
-        return timezone(profile['timezone'])
+        return timezone(config.get('profile','timezone'))
     except:
         return None
 

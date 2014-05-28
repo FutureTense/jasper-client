@@ -14,7 +14,7 @@ def logError():
 
 class Brain(object):
 
-    def __init__(self, mic, profile):
+    def __init__(self, mic, config):
         """
         Instantiates a new Brain object, which cross-references user
         input with a list of modules. Note that the order of brain.modules
@@ -23,7 +23,7 @@ class Brain(object):
 
         Arguments:
         mic -- used to interact with the user (for both input and output)
-        profile -- contains information related to the user (e.g., phone number)
+        config -- contains information related to the user (e.g., phone number)
         """
 
         def get_modules():
@@ -60,7 +60,7 @@ class Brain(object):
             return modules
 
         self.mic = mic
-        self.profile = profile
+        self.config = config
         self.modules = get_modules()
 
     def query(self, text):
@@ -75,7 +75,7 @@ class Brain(object):
             if module.isValid(text):
 
                 try:
-                    module.handle(text, self.mic, self.profile)
+                    module.handle(text, self.mic, self.config)
                     break
                 except:
                     logError()

@@ -31,12 +31,12 @@ def replaceAcronyms(text):
     return text
 
 
-def getForecast(profile):
+def getForecast(config):
     return feedparser.parse("http://rss.wunderground.com/auto/rss_full/"
-                            + str(profile['location']))['entries']
+                            + str(config.get('profile','location')))['entries']
 
 
-def handle(text, mic, profile):
+def handle(text, mic, config):
     """
         Responds to user-input, typically speech text, with a summary of
         the relevant weather for the requested date (typically, weather
@@ -45,15 +45,15 @@ def handle(text, mic, profile):
         Arguments:
         text -- user-input, typically transcribed speech
         mic -- used to interact with the user (for both input and output)
-        profile -- contains information related to the user (e.g., phone number)
+        config -- contains a ConfigParser object loaded with information from jasper.conf
     """
 
-    if not profile['location']:
+    if not config.has_option('profile','location'):
         mic.say(
             "I'm sorry, I can't seem to access that information. Please make sure that you've set your location on the dashboard.")
         return
 
-    tz = getTimezone(profile)
+    tz = getTimezone(config)
 
     service = DateService(tz=tz)
     date = service.extractDay(text)
@@ -69,7 +69,7 @@ def handle(text, mic, profile):
     else:
         date_keyword = "On " + weekday
 
-    forecast = getForecast(profile)
+    forecast = getForecast(config)
 
     output = None
 

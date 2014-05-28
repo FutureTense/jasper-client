@@ -1,11 +1,10 @@
 import unittest
 from mock import patch
 from urllib2 import URLError, urlopen
-import yaml
 from test_mic import Mic
 import modules
 import brain
-
+import jasperConfig
 
 def activeInternet():
     try:
@@ -18,7 +17,7 @@ def activeInternet():
 class TestModules(unittest.TestCase):
 
     def setUp(self):
-        self.profile = yaml.safe_load(open("profile.yml", "r"))
+        self.config = jasperConfig.load()
         self.send = False
 
     def runConversation(self, query, inputs, module):
@@ -33,7 +32,7 @@ class TestModules(unittest.TestCase):
         """
         self.assertTrue(module.isValid(query))
         mic = Mic(inputs)
-        module.handle(query, mic, self.profile)
+        module.handle(query, mic, self.config)
         return mic.outputs
 
     def testLife(self):
@@ -58,8 +57,7 @@ class TestModules(unittest.TestCase):
 
     @unittest.skipIf(not activeInternet(), "No internet connection")
     def testGmail(self):
-        key = 'gmail_password'
-        if not key in self.profile or not self.profile[key]:
+        if self.config.has_option('profile','gmail_password'):
             return
 
         query = "Check my email"
@@ -101,8 +99,8 @@ class TestBrain(unittest.TestCase):
     @staticmethod
     def _emptyBrain():
         mic = Mic([])
-        profile = yaml.safe_load(open("profile.yml", "r"))
-        return brain.Brain(mic, profile)
+        config = jasperConfig.load()
+        return brain.Brain(mic, config)
 
     @patch.object(brain, 'logError')
     def testLog(self, logError):

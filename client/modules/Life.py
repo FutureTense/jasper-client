@@ -4,7 +4,7 @@ import re
 WORDS = ["MEANING", "OF", "LIFE"]
 
 
-def handle(text, mic, profile):
+def handle(text, mic, config):
     """
         Responds to user-input, typically speech text, by relaying the
         meaning of life.
@@ -12,7 +12,7 @@ def handle(text, mic, profile):
         Arguments:
         text -- user-input, typically transcribed speech
         mic -- used to interact with the user (for both input and output)
-        profile -- contains information related to the user (e.g., phone number)
+        config -- contains a ConfigParser object loaded with information from jasper.conf
     """
     messages = ["It's 42, you idiot.",
                 "It's 42. How many times do I have to tell you?"]
