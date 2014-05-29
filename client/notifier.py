@@ -2,6 +2,7 @@ import Queue
 from modules import Gmail
 from apscheduler.scheduler import Scheduler
 import logging
+import jasperConfig
 logging.basicConfig()
 
 
@@ -32,6 +33,11 @@ class Notifier(object):
 
     def handleEmailNotifications(self, lastDate):
         """Places new Gmail notifications in the Notifier's queue."""
+ 
+        config = jasperConfig.load()
+        if not (config.has_option('profile','gmail_username') and config.has_option('profile','gmail_password')):
+            return 
+
         emails = Gmail.fetchUnreadEmails(self.profile, since=lastDate)
         if emails:
             lastDate = Gmail.getMostRecentDate(emails)

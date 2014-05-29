@@ -7,6 +7,7 @@ import json
 from wave import open as open_audio
 import audioop
 import pyaudio
+import playSound
 import alteration
 
 
@@ -237,7 +238,7 @@ class Mic:
         if THRESHOLD == None:
             THRESHOLD = self.fetchThreshold()
 
-        os.system("aplay -D hw:1,0 beep_hi.wav")
+        playSound.play("beep_hi.wav")
 
         # prepare recording stream
         audio = pyaudio.PyAudio()
@@ -267,7 +268,7 @@ class Mic:
             if average < THRESHOLD * 0.8:
                 break
 
-        os.system("aplay -D hw:1,0 beep_lo.wav")
+        playSound.play("beep_lo.wav")
 
         # save the audio data
         stream.stop_stream()
@@ -291,6 +292,11 @@ class Mic:
     def say(self, phrase, OPTIONS=" -vdefault+m3 -p 40 -s 160 --stdout > say.wav"):
         # alter phrase before speaking
         phrase = alteration.clean(phrase)
-
         os.system("espeak " + json.dumps(phrase) + OPTIONS)
-        os.system("aplay -D hw:1,0 say.wav")
+        playSound.play("say.wav")
+
+
+
+
+
+

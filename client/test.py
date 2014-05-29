@@ -57,7 +57,7 @@ class TestModules(unittest.TestCase):
 
     @unittest.skipIf(not activeInternet(), "No internet connection")
     def testGmail(self):
-        if self.config.has_option('profile','gmail_password'):
+        if not self.config.has_option('profile','gmail_password'):
             return
 
         query = "Check my email"

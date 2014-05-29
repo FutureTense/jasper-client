@@ -59,7 +59,15 @@ def fetchUnreadEmails(config, since=None, markRead=False, limit=None):
     """
     conn = imaplib.IMAP4_SSL('imap.gmail.com')
     conn.debug = 0
-    conn.login(config.get('profile','gmail_address'),config.get('profile','gmail_password'))
+
+    try:
+       email = config.get('profile','gmail_address')
+       password = config.get('profile','gmail_password')
+    except:
+       email=""
+       password=""
+
+    conn.login(email,password)
     conn.select(readonly=(not markRead))
 
     msgs = []
