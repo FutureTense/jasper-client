@@ -238,7 +238,7 @@ class Mic:
         if THRESHOLD == None:
             THRESHOLD = self.fetchThreshold()
 
-        playSound.play("beep_hi.wav")
+        playSound.play("../static/audio/beep_hi.wav")
 
         # prepare recording stream
         audio = pyaudio.PyAudio()
@@ -268,7 +268,7 @@ class Mic:
             if average < THRESHOLD * 0.8:
                 break
 
-        playSound.play("beep_lo.wav")
+        playSound.play("../static/audio/beep_lo.wav")
 
         # save the audio data
         stream.stop_stream()

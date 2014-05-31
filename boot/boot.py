@@ -6,13 +6,13 @@ import sys
 
 import vocabcompiler
 
-def say(phrase, OPTIONS = " -vdefault+m3 -p 40 -s 160 --stdout > say.wav"):
+def say(phrase, OPTIONS = " -vdefault+m3 -p 40 -s 160 --stdout > ../static/audio/say.wav"):
     import os,sys,inspect
     currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     parentdir = os.path.dirname(currentdir)
     sys.path.insert(0,parentdir)
     import playSound
-    playSound.play("say.wav")
+    playSound.play("../static/audio/say.wav")
 
 def configure():
     try:
@@ -24,9 +24,9 @@ def configure():
 
         print "STARTING CLIENT PROGRAM"
         os.system("/home/pi/jasper/client/start.sh &")
-        
+
     except:
-        
+
         print "COULD NOT CONNECT TO NETWORK"
         say("Hello, I could not connect to a network. Please read the documentation to configure your Raspberry Pi.")
         os.system("sudo shutdown -r now")
