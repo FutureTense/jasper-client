@@ -50,7 +50,7 @@ def compile(sentences, dictionary, languagemodel):
     words = list(set(words))
 
     # for spotify module
-    words.extend(["MUSIC", "SPOTIFY"])
+    #words.extend([""])
 
     # create the dictionary
     pronounced = g2p.translateWords(words)

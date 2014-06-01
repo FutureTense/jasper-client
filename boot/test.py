@@ -20,12 +20,7 @@ class TestVocabCompiler(unittest.TestCase):
         dictionary = "temp_dictionary.dic"
         languagemodel = "temp_languagemodel.lm"
 
-        words = [
-            'HACKER', 'LIFE', 'FACEBOOK', 'THIRD', 'NO', 'JOKE',
-            'NOTIFICATION', 'MEANING', 'TIME', 'TODAY', 'SECOND',
-            'BIRTHDAY', 'KNOCK KNOCK', 'INBOX', 'OF', 'NEWS', 'YES',
-            'TOMORROW', 'EMAIL', 'WEATHER', 'FIRST', 'MUSIC', 'SPOTIFY'
-        ]
+        words = ['THIRD', 'NO', 'TIME', 'TODAY', 'SECOND', 'YES', 'TOMORROW', 'WEATHER', 'FIRST']
 
         with patch.object(g2p, 'translateWords') as translateWords:
             with patch.object(vocabcompiler, 'text2lm') as text2lm:
