@@ -1,10 +1,12 @@
 import requests
 import os
 import sys
+import traceback
 import ConfigParser
 import string
 import configFile
 from requests.auth import HTTPBasicAuth
+from xml.dom import minidom
 
 cfile = configFile.main()
 Config = ConfigParser.ConfigParser()
@@ -42,7 +44,6 @@ def command(device, state):
 
       r = requests.get(cmd, auth=(username, password))
 
-      from xml.dom import minidom
       xmldoc = minidom.parseString(r.text)
       result = xmldoc.getElementsByTagName('RestResponse')
       status = result[0].attributes['succeeded'].value
@@ -54,6 +55,44 @@ def command(device, state):
 
    except:
       return "fail"
+
+def runprogram(program, programCmd): #Execute program with specific command.  Commands are case sensitive  
+
+   try:
+      try:
+         progFound = 0
+         item = string.split(Config.get('devices',program),",")
+         programId = item[0]
+         cmd = 'http://' + address + '/rest/programs/' + str(programId)
+         r = requests.get(cmd, auth=(username, password))
+         xmldoc = minidom.parseString(r.text)
+         result = xmldoc.getElementsByTagName('RestResponse')
+         try:
+            status = result[0].attributes['succeeded'].value
+         except:
+            progFound = 1            
+      except:
+         progFound = 0
+
+      if progFound != 1:
+         return "invalid program"
+       
+      commands = ["runIf", "run", "runThen", "runElse", "stop", "enable", "disable", "enableRunAtStartup", "disableRunAtStartup"]
+      if programCmd in commands:
+         cmd = 'http://' + address + '/rest/programs/' + str(programId) + "/" + programCmd
+         r = requests.get(cmd, auth=(username, password))
+         xmldoc = minidom.parseString(r.text)
+         result = xmldoc.getElementsByTagName('RestResponse')
+         status = result[0].attributes['succeeded'].value
+         if status == "true":
+             return "success"
+         else:
+             return "fail"            
+      else:
+         return "invalid command"
+
+   except:
+      return traceback.format_exc()
 
 def toggle(device):
       item = string.split(Config.get('devices',device),",")
